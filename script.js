@@ -46,33 +46,45 @@ function takeOrder() {
     })
 }
 function orderPrep(order) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         setTimeout(() => {
-            let orderPrepObj = { order_status: true, paid: false }
-            resolve(orderPrepObj)
+            if (order.length == 3) {
+                let orderPrepObj = { order_status: true, paid: false }
+                resolve(orderPrepObj)
+            }
+            else {
+                reject("order did not recieved")
+            }
         }, 1500)
     })
 }
-function payOrder() {
+function payOrder(orderObject) {
     return new Promise((resolve) => {
         setTimeout(() => {
-            let payOrderObj = { order_status: true, paid: true }
-            resolve(payOrderObj)
+            if (orderObject.order_status) {
+                orderObject.paid = true;
+                resolve(orderObject)
+            }
+            else {
+                reject("did not paid")
+            }
         }, 1000)
     })
 }
 function thankyouFnc() {
     alert("thankyou for eating with us today!")
 }
-function main(){
-    takeOrder().then(()=>{
-        return orderPrep()
-    }).then(()=>{
-        return payOrder();
-    }).then(payOrderStatus=>{
-        if(payOrderStatus&&payOrderStatus.paid){
+function main() {
+    takeOrder().then((order) => {
+        return orderPrep(order)
+    }).then((paid) => {
+        return payOrder(paid);
+    }).then(payOrderStatus => {
+        if (payOrderStatus && payOrderStatus.paid) {
             thankyouFnc()
         }
+    }).catch((err) => {
+        alert(err)
     })
 }
 main()
